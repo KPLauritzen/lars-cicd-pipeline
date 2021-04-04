@@ -12,6 +12,6 @@ RUN pip install -r requirements.txt
 
 # copy the content of the local src directory to the working directory
 COPY kasper.py .
-
+COPY test_kasper.py .
 # command to run on container start
 CMD [ "python", "./kasper.py" ]
