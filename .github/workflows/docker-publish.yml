@@ -28,7 +28,7 @@ jobs:
 
       - name: Run tests
         run: |
-          docker build . --file Dockerfile -t pipeline
+          docker build . --file Dockerfile --tag $IMAGE_NAME
           docker run pipeline pytest
 
 
@@ -71,3 +71,24 @@ jobs:
 
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
+
+  # Push image to GitHub Packages.
+  # See also https://docs.docker.com/docker-hub/builds/
+  deploy:
+    # Ensure test job passes before pushing image.
+    needs: push
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Pull and run image
+        run: |
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+
+          docker pull $IMAGE_ID
+          docker run $IMAGE_NAME
