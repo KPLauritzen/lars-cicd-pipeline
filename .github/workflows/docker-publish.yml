@@ -92,5 +92,4 @@ jobs:
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
-          docker pull $IMAGE_ID
-          docker run $IMAGE_NAME
+          docker run $IMAGE_ID
